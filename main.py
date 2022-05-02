@@ -7,11 +7,11 @@ def readText(filename):
     return content
 
 def formatText(text):
-    remove = [",", "'", '"', ":","，","：",",","•","、"," "]
+    remove = [",", "'", '"', ":","，","：",",","•","、"]
     for char in remove:
         text = text.replace(char, "")
 
-    split = [".", "。"]
+    split = [".", "。", " "]
     for char in split:
         text = text.replace(char, "\n")
 
@@ -51,20 +51,41 @@ def filterNGrams(list):
         point = refined[n][1]
         group = []
         while refined[n][1] == point:
+            #print(point)
             group.append([refined[n][0], n])
-            if n < len(refined)-1:
-                n += 1
+            n += 1
+
+            if n >= len(refined):
+                break
+
+        #print(group)
 
         while len(group) > 1:
             for item in group:
-                if group[0][0] in item[0] and group[0][0] != item[0]:
-                    print(group[0][0] + " " + item[0])
-                    kill.append(group[0][1])
-                    break
+                #print(item[0]+" "+group[0][0])
+                if group[0][0] != item[0]:
+                    if item[0] in group[0][0] and group[0][0] != item[0]:
+                        #print("kill: "+item[0] + " for " + group[0][0])
+                        kill.append(item[1])
+                    elif group[0][0] in item[0]:
+                        #print("kill: "+group[0][0] + " for " + item[0])
+                        kill.append(group[0][1])
             group.pop(0)
 
+    #print(refined)
+
     for index in kill:
-        refined.pop(index)
+        refined[index] = None
+
+    i = 0
+    while i < len(refined):
+        if refined[i] == None:
+            refined.pop(i)
+        else:
+            i+=1
+
+
+    #print(refined)
 
     return refined
 
